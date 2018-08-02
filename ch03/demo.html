@@ -1,0 +1,170 @@
+<html>
+    <head>
+    <meta charset=utf-8>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script src="../ch00/lib/underscore.js"></script>    
+    </head>
+    <title></title>
+    <body>
+        <div class="show-result"></div>
+    </body>
+</html>
+<script>
+// 如果不存在object方法，就添加一个
+if (typeof Object.create !== "function") {
+    Object.create = function(o) {
+        function F() {}
+        F.prototype = o;
+        return new F();
+    }
+}
+
+var assertEqual = function (val1, val2, msg) {
+    if (!_.isEqual(val1, val2))
+        throw(msg || (val1 + ' does not equal ' + val2));
+};
+
+
+var Model = {
+    inherited: function(){},
+    created: function(){},
+
+    prototype: {
+        init: function(){}
+    },
+
+    create: function(){
+        var object = Object.create(this);
+        object.parent = this;
+        object.prototype = object.fn = Object.create(this.prototype);
+
+        object.created();
+        this.inherited(object);
+        return object;
+    },
+
+    extend: function(o){
+        var extended = o.extended;
+        jQuery.extend(this, o);
+        if (extended) extended(this);
+    },
+
+    include: function(o){
+        var included = o.included;
+        jQuery.extend(this.prototype, o);
+        if (included) included(this);
+    },
+
+    init: function(){
+        var instance = Object.create(this.prototype);
+        instance.parent = this;
+        instance.init.apply(instance, arguments);
+        return instance;
+    }
+};
+
+var Asset = Model.create();
+var User = Model.create();
+
+var user = User.init();
+
+// 添加对象属性
+jQuery.extend(Model, {
+    find: function(){}
+});
+
+// 添加实例属性
+jQuery.extend(Model.prototype, {
+    init: function(atts) {
+        if (atts) this.load(atts);
+    }, 
+
+    load: function(attributes){
+        for (var name in attributes) {
+            this[name] = attributes[name];
+        }
+    }
+});
+
+
+// var asset = Asset.init({name: "foo.png"});
+// console.log(asset)
+
+// 用来保存资源对象
+Model.records = {};
+
+Model.include({
+    newRecord: true,
+
+    create: function(){
+        this.newRecord = false;
+        this.parent.records[this.id] = this;
+    },
+
+    destroy: function(){
+        delete this.parent.records[this.id];
+    }
+});
+// 更新实例
+Model.include({
+    update: function(){
+        this.parent.records[this.id] = this;
+    }
+});
+
+// 保存实例 将一个对象存入hash记录中，保持一个引用指向它
+Model.include({
+    save: function(){
+        this.newRecord ? this.create() : this.update();
+    }
+});
+
+Model.extend({
+    // 通过ID查找，找不到抛出异常
+    find: function(id){
+        if (!this.records[id]) {
+            throw("Unknow record");
+        }
+
+        return this.records[id];
+    }
+});
+
+var asset = Asset.init();
+asset.name = "same, same";
+asset.id = 1;
+asset.save();
+
+var asset2 = Asset.init();
+asset2.name = "but different";
+asset2.id = 2;
+asset2.save();
+
+assertEqual( Asset.find(1).name, "same, same" );
+
+asset2.destroy();
+
+// 生成 GUID
+Math.guid = function(){
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+    return v.toString(16);
+  }).toUpperCase();
+};
+
+Model.include({
+    create: function(){
+        if (!this.id) {
+            
+            this.id = Math.guid();
+        }
+        this.newRecord = false;
+        this.parent.records[this.id] = this;
+    }
+});
+
+var asset = Asset.init();
+asset.save();
+
+console.log(asset.id);
+</script>

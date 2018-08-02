@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="lib/underscore.js"></script>
+        <meta charset="utf-8">
+        <script>
+            var assertEqual = function (val1, val2, msg) {
+                if (!_.isEqual(val1, val2))
+                    throw(msg || (val1 + ' does not equal ' + val2));
+            };
+
+            assertEqual({one: 1}, {one: 2});
+            
+        </script>
+    </head>
+</html>

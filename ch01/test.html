@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="http://maccman.github.io/spine.todos/lib/spine.js"> </script>
+        <script>
+        // var Class = function () {
+        //     var klass = function () {
+        //         this.init.apply(this, arguments);
+        //     };
+        //     klass.prototype.init = function () {};
+
+        //     // alias
+        //     klass.fn = klass.prototype;
+
+        //     klass.fn.parent = klass;
+
+        //     // add attributions
+        //     klass.extend = function (obj) {
+        //         var extended = obj.extended;
+        //         for (var i in obj) {
+        //             klass[i] = obj[i];
+        //         }
+        //         if (extended) extended(klass);
+        //     };
+
+        //     // add attributions for instance
+        //     klass.include = function (obj) {
+        //         var included = obj.includeed;
+        //         for (var i in obj) {
+        //             klass.fn[i] = obj[i];
+        //         }
+        //         if (included) included(klass);
+        //     };
+
+        //     return klass;
+        // };
+
+        // var Person = new Class;
+        // Person.include({
+        //     find: function (id) { return id;},
+        //     exist: function (id) {}
+        // });
+        // var person = new Person;
+        // console.log(person.find(12));
+
+        // 子类继承父类属性
+        // 1.构造函数
+        // 2.父类的新实例赋值给构造函数的原型
+        // var Animal = function () {};
+
+        // Animal.prototype.breath = function () {
+        //     console.log('breath');
+        // };
+
+        // // Dog继承Animal
+        // var Dog = function () {};
+        // Dog.prototype = new Animal;
+
+        // Dog.prototype.wag = function () {
+        //     console.log('wag tail');
+        // };
+
+        // var dog = new Dog();
+        // var animal = new Animal();
+
+        // var Class = function (parent) {
+        //     var klass = function () {
+        //         this.init.apply(this, arguments);
+        //     };
+        //     if (parent) {
+        //         var subclass = function () {};
+        //         subclass.prototype = parent.prototype;
+        //         klass.prototype = new subclass;
+        //     }
+        //     klass.prototype.init = function () {};
+
+        //     // alias
+        //     klass.fn = klass.prototype;
+
+        //     klass.fn.parent = klass;
+        //     klass._super = klass.__proto__;
+            
+        //     // add attributions
+        //     klass.extend = function (obj) {
+        //         var extended = obj.extended;
+        //         for (var i in obj) {
+        //             klass[i] = obj[i];
+        //         }
+        //         if (extended) extended(klass);
+        //     };
+
+        //     // add attributions for instance
+        //     klass.include = function (obj) {
+        //         var included = obj.includeed;
+        //         for (var i in obj) {
+        //             klass.fn[i] = obj[i];
+        //         }
+        //         if (included) included(klass);
+        //     };
+
+        //     return klass;
+        // };
+
+        // var Animal = new Class;
+
+        // Animal.include({
+        //     breath: function () {
+        //         console.log('breath');
+        //     },
+        // });
+        // var Cat = new Class(Animal)
+        // var tommy = new Cat;
+        // tommy.breath();
+        // var add = function (a, b) {
+        //     return a + b;
+        // };
+        // var c = add.call(this, 1, 2); // 3
+        // var c = add.apply(this, [1, 2]); // 3
+
+        // var proxy = function (func, thisObject) {
+        //     return function () {
+        //         return func.apply(thisObject, arguments);   
+        //     };
+        // };
+
+        // var clicky = {
+        //     wasClicked: function () {
+
+        //     },
+
+        //     addListeners: function () {
+        //         var self = this;
+        //         $('.clicky').click(proxy(this.wasClicked, this));
+        //     }
+        // };
+        
+        // var Class = function (parent) {
+        //     var klass = function () {
+        //         this.init.apply(this, arguments);
+        //     };
+        //     klass.prototype.init = function () { 
+        //         console.log(arguments);
+        //         return 222
+        //     };
+        //     klass.fn = klass.prototype;
+
+        //     // 添加一个proxy函数
+        //     klass.proxy = function (func) {
+        //         var self = this;
+        //         return function () {
+        //             return func.apply(self, arguments);
+        //         };
+        //     }; 
+
+        //     // 在实例中也添加这个函数
+        //     klass.fn.proxy = klass.proxy;
+
+
+        //     // add attributions for instance
+        //     klass.include = function (obj) {
+        //         var included = obj.includeed;
+        //         for (var i in obj) {
+        //             klass.fn[i] = obj[i];
+        //         }
+        //         if (included) included(klass);
+        //     };
+
+        //     return klass;
+        // };
+
+        // var Button = new Class;
+        // var button = new Button;
+
+        // console.log(button.init());
+        
+        var Person = Spine.Class.create();
+        
+        Person.extend({
+            find: function () {}
+        });
+
+        Person.include({
+            init: function (atts) {
+                this.attributes = atts || {};
+            }
+        });
+        var person = Person.init({a: 123213});
+        console.log(person.attributes);
+        </script>
+    </head>
+</html>
