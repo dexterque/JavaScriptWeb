@@ -24,6 +24,12 @@ var assertEqual = function (val1, val2, msg) {
         throw(msg || (val1 + ' does not equal ' + val2));
 };
 
+var assert = function(value, msg) {
+    if (!value) {
+        throw(msg || (value + " does not equal true"));
+    }
+};
+
 
 var Model = {
     inherited: function(){},
@@ -42,13 +48,13 @@ var Model = {
         this.inherited(object);
         return object;
     },
-
+    // 在类上添加方法
     extend: function(o){
         var extended = o.extended;
         jQuery.extend(this, o);
         if (extended) extended(this);
     },
-
+    // 在原型链上添加方法，子类都可以使用
     include: function(o){
         var included = o.included;
         jQuery.extend(this.prototype, o);
@@ -165,6 +171,53 @@ Model.include({
 
 var asset = Asset.init();
 asset.save();
+// console.log(asset.id);
 
-console.log(asset.id);
+var asset = Asset.init({name: "foo"});
+asset.save();
+
+// 正确传入资源
+assertEqual(Asset.find(asset.id).name, "foo")
+
+// 更改属性，而没有调用update()
+asset.name = "wem";
+
+// asset的名字被修改为 “wem”
+// assertEqual(Asset.find(asset.id).name, "foo")
+
+// 修复属性修改会影响原始资源的问题
+// 执行find()的时候创建一个新对象，同样在创建或更新记录是都要复制对象
+Asset.extend({
+    find: function(id){
+        var record = this.records[id];
+        if (!record) {
+            throw("Unknow record");
+        }
+        return record.dup(); // 复制记录
+    }
+});
+
+Asset.include({
+    create: function(){
+        this.newRecord = false;
+        this.parent.records[this.id] = this.dup();
+    },
+
+    update: function(){
+        this.parent.records[this.id] = this.dup();
+    },
+
+    dup: function(){
+        return jQuery.extend(true, {}, this);
+    }
+});
+
+var asset = Asset.init();
+asset.save();
+
+Model.extend({
+    created: function(){
+        this.records = {};
+    }
+})
 </script>
