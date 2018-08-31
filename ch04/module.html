@@ -1,0 +1,101 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script src="../ch00/lib/underscore.js"></script>
+</head>
+
+<script>
+// Controller lib
+(function($, exports){
+    var mod = function(){};
+    mod.fn = mod.prototype;
+
+    mod.fn.proxy = function(func){
+        return $.proxy(func, this);
+    };
+
+    mod.fn.load = function(func){
+        $(this.proxy(func));
+    };
+
+    mod.fn.include = function(ob){
+        $.extend(this, ob);
+    };
+
+    exports.Controller = mod;
+})(jQuery, window);
+
+(function($, Controller){
+    var mod = new Controller;
+    mod.toggleClass = function(e){
+        this.view.toggleClass("over", e.data);
+    };
+
+    mod.load(function(){
+        this.view = $("#view");
+        this.view.mouseover(this.proxy(this.toggleClass));
+        this.view.mouseout(this.proxy(this.toggleClass));
+    })
+})(jQuery, Controller);
+</script>
+
+<script>
+    // 使用全局对象作为上下文，而不是window对象
+    // 用来创建全局对象
+    var exports = this;
+
+    (function($){
+        var mod = {};
+
+        mod.create = function(includes){
+            var result = function(){
+                this.init.apply(this, arguments);
+            };
+
+            result.fn = result.prototype;
+            result.fn.init = function(){};
+
+            result.proxy = function(func){
+                return $.proxy(func, this);
+            };
+            result.fn.proxy = result.proxy;
+
+            result.include = function(ob){
+                $.extend(this.fn, ob);
+            };
+
+            result.extend = function(ob){
+                $.extend(this, ob);
+            };
+            if (includes) {
+                result.include(inlcudes);
+            }
+
+            return result;
+        };
+
+        exports.Controller = mod;
+    })(jQuery);
+</script>
+
+<style>
+    #view{
+      margin: 20px;
+      padding: 20px;
+      width: 100px;
+      border: 5px dashed blue;
+    }
+
+    #view.over{
+        border-color: red;
+    }
+</style>
+
+<body>
+    <id id="view">mouse over me</id>
+</body>
+
+</html>

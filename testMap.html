@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>基本地图展示</title>
+    <link rel="stylesheet" href="https://cache.amap.com/lbs/static/main1119.css"/>
+    <script src="https://cache.amap.com/lbs/static/es5.min.js"></script>
+    <script src="https://webapi.amap.com/maps?v=1.4.9&key=d42444b1152750c99be28e50a203710b"></script>
+    <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+</head>
+<body>
+<div id="container"></div>
+
+<script>
+    var map = new AMap.Map('container', {
+        resizeEnable: true,
+        zoom:11,
+        center: [111.46923,27.237842]
+    });
+// 创建两个点标记
+var marker1 = new AMap.Marker({
+    position: new AMap.LngLat(111.468028,27.231737),   // 经纬度对象，如 new AMap.LngLat(116.39, 39.9); 也可以是经纬度构成的一维数组[116.39, 39.9]
+    icon: 'E:/JavaScript/JavaScriptWeb/客服优先.png',
+    title: '网格员001',
+    clickable: true
+});
+var marker2 = new AMap.Marker({
+    position: new AMap.LngLat(111.456184,27.242192),   // 经纬度对象，如 new AMap.LngLat(116.39, 39.9); 也可以是经纬度构成的一维数组[116.39, 39.9]
+    icon: 'E:/JavaScript/JavaScriptWeb/客服优先.png',
+    title: '网格员002',
+    clickable: true
+});
+
+var marker3 = new AMap.Marker({
+    position: new AMap.LngLat(111.464638,27.243832),   // 经纬度对象，如 new AMap.LngLat(116.39, 39.9); 也可以是经纬度构成的一维数组[116.39, 39.9]
+    icon: 'E:/JavaScript/JavaScriptWeb/客服优先.png',
+    title: '网格员003',
+    clickable: true
+});
+map.add(marker1);
+map.add(marker2);
+map.add(marker3);
+// 自动适配到合适视野范围
+// 无参数，默认包括所有覆盖物的情况
+map.setFitView();
+// 传入覆盖物数组，仅包括polyline和marker1的情况
+// map.setFitView([polyline,marker1]);
+</script>
+</body>
+</html>

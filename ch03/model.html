@@ -48,7 +48,7 @@ var Model = {
         this.inherited(object);
         return object;
     },
-    // 在类上添加方法
+    // 在对象上添加方法
     extend: function(o){
         var extended = o.extended;
         jQuery.extend(this, o);
@@ -220,4 +220,68 @@ Model.extend({
         this.records = {};
     }
 })
+
+// 向ORM中添加记录
+Model.extend({
+    populate: function(values){
+        // 重置model和records
+        this.records = {};
+
+        for (var i=0, il = values.length; i < il; i++) {
+            var record = this.init(values[i]);
+            records.newRecord = false;
+            this.records[record.id] = record;
+        }
+    }
+});
+// jQuery.getJSON("/assets", function(result){
+//     Asset.populate(result);
+// });
+
+// 给ORM添加本地储存
+Model.extend({
+    created: function(){
+        this.records = {};
+        this.attributes = [];
+    }
+});
+
+Asset.attributes = ["name", "ext"];
+
+Model.include({
+    attributes: function(){
+        var result = {};
+        for (var i in this.parent.attributes) {
+            var attr = this.parent.attributes[i];
+            result[attr] = this[attr];
+        }
+        result.id = this.id;
+
+        return result;
+    }
+});
+
+Asset.attributes = ["name", "ext"];
+
+var asset = Asset.init({name: "document", ext: ".txt"});
+asset.attributes();
+
+// 
+Model.include({
+    createRemote: function(url, callback){
+        $.post(url, this.attributes(), callback);
+    },
+
+    updateRemote: function(url, callback){
+        $.ajax({
+            url:      url,
+            data:     this.attributes(),
+            success:  callback,
+            type:     "PUT"
+        });
+    }
+})
+
+// 用法：
+// Asset.init({name: "jason.txt"}).createRemote("/assets");
 </script>
