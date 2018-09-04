@@ -48,8 +48,13 @@ var exports = this;
 </script> 
 
 <script>
+var exports = this;
 jQuery(function($){
     exports.SearchView = Controller.create({
+        // 所有事件名称，选择器和回调的映射
+        events: {
+            "submit form": "search"
+        },
         // 选择器到局部变量名的映射
         elements: {
             "input[type=search]": "searchInput",
@@ -63,7 +68,7 @@ jQuery(function($){
             this.searchForm.submit(this.proxy(this.search));
         },
 
-        search: function(){
+        search: function(e){
             console.log("Searching:", this.searchInput.val());
             return false;
         },
@@ -78,6 +83,25 @@ jQuery(function($){
         refreshElements: function(){
             for (var key in this.elements) {
                 this[this.elements[key]] = this.$(key);
+            }
+        },
+
+        // 根据第一个空格来分割
+        eventSplitter: /^(\w+)\s*(.*)$/,
+
+        delegateEvents: function(){
+            for (var key in this.events) {
+                var methodName = this.events[key];
+                var method = this.proxy(this[methodName]);
+
+                var match = key.match(this.eventSplitter);
+                var eventName = match[1], selector = match[2];
+
+                if ('' === selector) {
+                    this.el.bind(eventName, method);
+                } else {
+                    this.el.delegate(selector, eventName, method);
+                }
             }
         }
     });
