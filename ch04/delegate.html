@@ -1,0 +1,50 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script src="../ch00/lib/underscore.js"></script>
+</head>
+<body>
+<script>
+window.location.hash = "foo";
+
+$(window).on("hashchange", function(e){
+    console.log(2)
+});
+
+jQuery(function(){
+    var hashValue = location.hash.slice(1);
+    if (hashValue) {
+        $(window).trigger("hashchange");
+    }
+});
+
+// HTML5 History API
+// 对象数据可以任意的，当popstate事件触发是传入
+var dataObject = {
+    createdAt: "2011-10-10",
+    author: "moss"
+};
+
+var url = 'E:\\JavaScript\\JavaScriptWeb\\ch04\\delegate.html#nihao'; //url 必须使用和当前地址相同的域名
+history.pushState(dataObject, document.title, url);
+
+window.addEventListener("popstate", function(event){
+    if (event.state) {
+        // 调用了history.pushState
+    }
+});
+
+// jQuery实现
+$(window).bind("popstate", function(event){
+    event = event.originalEvent;
+    if (event.state) {
+        // 调用了history.pushState
+    }
+});
+</script>
+</body>
+</html>

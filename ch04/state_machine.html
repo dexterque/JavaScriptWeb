@@ -1,0 +1,68 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script src="../ch00/lib/underscore.js"></script>
+</head>
+
+<script>
+var Events = {
+    bind: function(){
+        if (!this.o) {
+            this.o = $({});
+        }
+        this.o.bind.apply(this.o, arguments);
+    },
+
+    trigger: function(){
+        if (!this.o) {
+            this.o = $({});
+        }
+        this.o.trigger.apply(this.o, arguments);
+    },
+}; 
+
+var StateMachine = function(){};
+StateMachine.fn = StateMachine.prototype;
+
+// 添加事件绑定或触发行为
+$.extend(StateMachine.fn, Events); // 绑定在原型链上要使用对象名访问，绑定在类上可以通过类名访问
+
+StateMachine.fn.add = function(controller){
+    this.bind("change", function(e, current){
+        if (controller == current) {
+            controller.activate();
+        } else {
+            controller.deactivate();
+        }
+    });
+
+    controller.active = $.proxy(function(){
+        this.trigger("change", controller);
+    }, this);
+};
+
+var con1 = {
+    activate: function(){console.log("controller 1 activated")},
+    deactivate: function(){console.log("controller 1 deactivated")}
+};
+
+var con2 = {
+    activate: function(){console.log("controller 2 activated")},
+    deactivate: function(){console.log("controller 2 deactivated")}
+};
+
+var sm = new StateMachine;
+sm.add(con1);
+con1.active();
+// sm.add(con2);
+// sm.trigger("change", con2);
+</script>
+
+<body>
+    <id id="view">mouse over me</id>
+</body>
+
+</html>
