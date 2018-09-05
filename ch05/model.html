@@ -36,7 +36,6 @@
         if (!(list = this._callbacks[ev])) {
             return this;
         }
-        console.log(list)
         jQuery.each(list, function(){
             this();
         });
