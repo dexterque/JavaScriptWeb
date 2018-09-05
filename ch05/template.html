@@ -1,0 +1,91 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script src="../ch00/lib/underscore.js"></script>
+    <script src="../ch00/lib/jquery.tmpl.min.js"></script>
+</head>
+<body>
+<div id="views">
+    <h1>abc</h1>
+</div>
+
+<script>
+// 动态渲染视图 
+
+// 方法一
+// 待渲染的视图的内容不多的时候推荐用这种方法，可能只需创建几个元素即可。
+window.onload = function(){
+    var views = document.getElementById("views");
+    views.innerHTML = ""; // 将元素内容清空
+
+    var container = document.createElement("div");
+    container.id = "user";
+
+    var name = document.createElement("span");
+    name.innerHTML = "name";
+
+    container.appendChild(name);
+    views.appendChild(container);
+};
+
+// or jQuery
+(function($){
+    $("#views").empty();
+
+    var container = $("<div />").attr({id: "user"});
+    var name = $("<span />").text("name");
+
+    $("#views").append(container.append(name));
+})(jQuery)
+
+
+// 使用模板
+$(function(){
+    var data = {
+        getName: function(){
+            return "Bob";
+        }
+    };
+
+    var element = $("#someTemplate").tmpl(data);
+    element.appendTo($("body"));
+});
+
+// 绑定
+var addChange = function(ob){
+    ob.change = function(callback){
+        if (callback) {
+            if (!this._change) this._change = [];
+            this._change.push(callback);
+        } else {
+            if (!this._change) return;
+            for (var i=0; i < this._change.length; ++i) {
+                this._change[i].apply(this);
+                this._change[i]();
+            }
+        }
+    } 
+};
+
+var object = {};
+object.name = "Foo";
+
+addChange(object);
+object.change(function(){
+    console.log("Changed!", this);
+    // 这里可以添加更新视图的代码
+});
+object.change();
+object.name = "Bar";
+object.change();
+
+</script>
+<script type="text/x-jquery-tmpl" id="someTemplate">
+    <span>${getName()}</span>
+</script>
+</body>
+</html>

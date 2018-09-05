@@ -1,0 +1,65 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script src="../ch00/lib/underscore.js"></script>
+    <script src="../ch00/lib/jquery.tmpl.min.js"></script>
+</head>
+<body>
+<script id="userTmpl" type="text/x-jquery-tmpl">
+    <li>${name}</li>
+</script>
+
+<ul id="users">
+
+</ul>
+<script>
+    var User = function(name){
+        this.name = name;
+    };
+
+    User.records = [];
+    
+    User.bind = function(ev, callback){
+        var calls = this._callbacks || (this._callbacks = {});
+        (this._callbacks[ev] || (this._callbacks[ev] = []).push(callback));
+    };
+
+    User.trigger = function(ev){
+        var list, calls, i, l;
+        if (!(calls = this._callbacks)) {
+            return this;
+        }
+        if (!(list = this._callbacks[ev])) {
+            return this;
+        }
+        console.log(list)
+        jQuery.each(list, function(){
+            this();
+        });
+    };
+
+    User.create = function(name){
+        this.records.push(new this(name));
+        this.trigger("change");
+    };
+
+    jQuery(function($){
+        User.bind("change", function(){
+            var template = $("#userTmpl").tmpl(User.records);
+            $("#users").empty();
+            $("#users").append(template);
+        });
+
+        User.create("First one");
+
+        setTimeout(function(){
+            User.create("Another one");
+        }, 2000);
+    });
+</script>
+</body>
+</html>
